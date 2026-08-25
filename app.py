@@ -8,14 +8,7 @@ st.set_page_config(page_title="Gestor Bienestar Xalapa", page_icon="📱", layou
 st.markdown("### Gestor de Mensajes Bienestar Xalapa (BVP)")
 st.markdown("*Versión Web para Celulares y Tablets*")
 
-# Inicialización de estados (forzando tiempo_fin en 0 para evitar bloqueos fantasma)
-if 'tiempo_fin' not in st.session_state:
-    st.session_state.tiempo_fin = 0.0
-else:
-    # Fuerza la liberación inmediata del botón si se quedó trabado
-    if time.time() > st.session_state.tiempo_fin:
-        st.session_state.tiempo_fin = 0.0
-
+# Inicialización de estados
 if 'df' not in st.session_state:
     st.session_state.df = None
 
@@ -87,25 +80,14 @@ https://maps.app.goo.gl/Eu9iKcpUoyuZiYve9
         st.text_area("📋 Vista Previa del Mensaje:", value=mensaje, height=180)
         st.divider()
 
-        tiempo_actual = time.time()
-        tiempo_restante = int(st.session_state.tiempo_fin - tiempo_actual)
-
-        if tiempo_restante > 0:
-            st.warning(f"⏳ **Espera de seguridad activa:** Faltan {tiempo_restante} segundos para poder enviar el próximo mensaje.")
-            st.markdown("🔒 *Los botones están bloqueados temporalmente para proteger tu WhatsApp.*")
-        else:
-            st.success("🟢 **Estado:** ¡Listo para enviar de forma segura!")
-            
-            if celular and celular != "nan":
-                tel_limpio_cel = ''.join(filter(str.isdigit, celular))
-                link_cel = f"https://wa.me/52{tel_limpio_cel}?text={urllib.parse.quote(mensaje)}"
-                if st.link_button("💬 Enviar a Celular vía WhatsApp", url=link_cel):
-                    st.session_state.tiempo_fin = time.time() + 120
-                    st.rerun()
-            
-            if fijo and fijo != "nan":
-                tel_limpio_fijo = ''.join(filter(str.isdigit, fijo))
-                link_fijo = f"https://wa.me/52{tel_limpio_fijo}?text={urllib.parse.quote(mensaje)}"
-                if st.link_button("📞 Enviar a Teléfono Fijo/Alt. vía WhatsApp", url=link_fijo):
-                    st.session_state.tiempo_fin = time.time() + 120
-                    st.rerun()
+        st.success("🟢 **Estado:** ¡Listo para enviar!")
+        
+        if celular and celular != "nan":
+            tel_limpio_cel = ''.join(filter(str.isdigit, celular))
+            link_cel = f"https://wa.me/52{tel_limpio_cel}?text={urllib.parse.quote(mensaje)}"
+            st.link_button("💬 Enviar a Celular vía WhatsApp", url=link_cel)
+        
+        if fijo and fijo != "nan":
+            tel_limpio_fijo = ''.join(filter(str.isdigit, fijo))
+            link_fijo = f"https://wa.me/52{tel_limpio_fijo}?text={urllib.parse.quote(mensaje)}"
+            st.link_button("📞 Enviar a Teléfono Fijo/Alt. vía WhatsApp", url=link_fijo)
