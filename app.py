@@ -8,8 +8,14 @@ st.set_page_config(page_title="Gestor Bienestar Xalapa", page_icon="📱", layou
 st.markdown("### Gestor de Mensajes Bienestar Xalapa (BVP)")
 st.markdown("*Versión Web para Celulares y Tablets*")
 
+# Inicialización de estados (forzando tiempo_fin en 0 para evitar bloqueos fantasma)
 if 'tiempo_fin' not in st.session_state:
-    st.session_state.tiempo_fin = 0
+    st.session_state.tiempo_fin = 0.0
+else:
+    # Fuerza la liberación inmediata del botón si se quedó trabado
+    if time.time() > st.session_state.tiempo_fin:
+        st.session_state.tiempo_fin = 0.0
+
 if 'df' not in st.session_state:
     st.session_state.df = None
 
